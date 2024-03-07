@@ -35,8 +35,32 @@ function TotalReports() {
         report._id === reportId ? { ...report, resolved: true } : report
       );
       setAllReports(updatedReports);
+      // code to handle resolved report to make unresolved
+      const resolved = updatedReports.filter((report) => report.resolved);
+      const unresolved = updatedReports.filter((report) => !report.resolved);
+      setResolvedReports(resolved);
+      setUnresolvedReports(unresolved);
     } catch (error) {
       console.error('Error resolving report:', error);
+    }
+  };
+  const unresolveReport = async (reportId) => {
+    try {
+      // Make a request to mark the report as unresolved in the backend
+      await axios.put(`http://localhost:3001/api/unresolveReport/${reportId}`);
+  
+      // Update the local state to reflect the change
+      const updatedReports = allReports.map((report) =>
+        report._id === reportId ? { ...report, resolved: false } : report
+      );
+      setAllReports(updatedReports);
+      // Separate reports into resolved and unresolved
+      const resolved = updatedReports.filter((report) => report.resolved);
+      const unresolved = updatedReports.filter((report) => !report.resolved);
+      setResolvedReports(resolved);
+      setUnresolvedReports(unresolved);
+    } catch (error) {
+      console.error('Error marking report as unresolved:', error);
     }
   };
 
@@ -112,13 +136,20 @@ function TotalReports() {
             <p className="text-gray-600">Time: {report.time}</p>
             <p className="text-gray-600">Description: {report.description}</p>
             <p className="text-gray-600">Seriousness: {report.seriousness}</p>
-            {!report.resolved && (
+            {!report.resolved ? (
               <button
                 onClick={() => resolveReport(report._id)}
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
                 Resolve
               </button>
+              ) : (
+                <button
+                  onClick={() => unresolveReport(report._id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+                >
+                  Mark Unresolved
+                </button>
             )}
           </div>
         ))}

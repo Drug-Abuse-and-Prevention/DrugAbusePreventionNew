@@ -38,7 +38,7 @@ function AdminHome() {
 
       // Calculate and set the total number of reports
       const total = sortedReports.reduce((acc, report) => acc + report.count, 0);
-      setTotalReports(total);
+      // setTotalReports(total);
     });
 
     // Fetch number of resolved reports
@@ -50,6 +50,11 @@ function AdminHome() {
     axios.get('http://localhost:3001/api/totalpendingreports').then((response) => {
       setPendingReports(response.data.length);
     });
+    axios.get('http://localhost:3001/api/totalreports').then((response) =>{
+      setTotalReports(response.data.length);
+  });
+ 
+  
   }, []);
 
   return (

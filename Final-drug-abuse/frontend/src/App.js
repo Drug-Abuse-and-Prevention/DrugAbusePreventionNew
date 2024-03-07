@@ -4,7 +4,6 @@ import Header from "./Components/Header";
 import Navbar from "./Components/Navbar";
 import Main from "./Components/Main";
 import Footer from "./Components/Footer";
-import ApiService from "./Services/ApiService";
 import ReportForm from "./Pages/ReportForm";
 import News from "./Pages/News";
 import OurMission from "./Pages/OurMission";
@@ -22,12 +21,16 @@ import Educational from "./Pages/Educational";
 import OnlineServices from "./Pages/OnlineServices";
 import CollegeSupportForm from "./Pages/CollegeSupportForm";
 import StudentSupportDetails from "./Components/Admin/StudentSupportDetails";
-
+import UserLogin from "./Pages/User/UserLogin";
+import UserSignup from "./Pages/User/UserSignup";
+import UserDashboard from "./Pages/User/UserDashBoard";
+import UserQuiz from "./Pages/User/UserQuiz";
+import UserReports from "./Pages/User/UserReports";
+import AnxietytestDashBoard from "./Pages/User/AnxietytestDashBoard";
+import AnxietyQuiz from "./Pages/User/AnxietyQuiz";
+import AfterSubmitAnxiety from "./Pages/User/AfterSubmitAnxiety";
 function App() {
-  const [whatsappData, setWhatsappData] = useState({
-    mobile: "",
-    message: "",
-  });
+  
 
   const [isAdminLoggedIn, setAdminLoggedIn] = useState(
     localStorage.getItem("isAdminLoggedIn") === "true"
@@ -44,7 +47,6 @@ function App() {
   return (
     <Router>
       { !isAdminLoggedIn && !isAdminPage && <Header />}
-      { !isAdminLoggedIn && !isAdminPage && <Navbar />}
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/reportform" element={<ReportForm />} />
@@ -64,7 +66,15 @@ function App() {
         <Route path="/onlineServices" element={<OnlineServices />} />
         <Route path="/collegesupportform" element={<CollegeSupportForm />} />
         <Route path="/studentSupportDetails" element={<StudentSupportDetails />} />
-      </Routes>
+        <Route path="/userLogin" element={<UserLogin/>}/>
+        <Route path="/userSignup" element={<UserSignup/>}/>
+        <Route path="/userDashboard" element={<UserDashboard/>}/>
+        <Route path="/userQuiz" element={<UserQuiz/>}/>
+        <Route path="/userReports" element={<UserReports/>}/>
+        <Route path="/anxietytestdashboard" element={<AnxietytestDashBoard/>}/>
+        <Route path="/anxietyquiz" element={<AnxietyQuiz/>}/>
+        <Route path="/aftersubmitanxiety" element = {< AfterSubmitAnxiety/>} />
+        </Routes>
       { !isAdminLoggedIn && !isAdminPage && <Footer />}
     </Router>
   );

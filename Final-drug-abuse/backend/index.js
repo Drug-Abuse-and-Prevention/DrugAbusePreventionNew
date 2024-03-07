@@ -10,6 +10,11 @@ const Post = require("./Models/PostModel");
 const requestIp = require("request-ip");
 const CollegeSupport = require("./Models/CollegeSupportModel");
 const sgMail = require("@sendgrid/mail");
+const User = require("./Models/UserModel");
+const Goal = require("./Models/GoalModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const authMiddleware = require("./authMiddleware");
 
 dotenv.config();
 
@@ -85,7 +90,7 @@ app.post("/report", async (req, res) => {
       🔴 *Urgent Action Required! Respond promptly to address the situation.* 🔴
     `;
 
-    const employees = await EmployeeData.find({}, "mobile");
+    const employees = await EmployeeData.find({verified: true}, "mobile");
     const phoneNumbers = employees.map((employee) => employee.mobile);
 
     for (const phoneNumber of phoneNumbers) {
@@ -165,7 +170,7 @@ app.get("/api/reportsPerDay", async (req, res) => {
   }
 });
 
-// Fetch all reports
+// // Fetch all reports
 app.get("/api/totalreports", async (req, res) => {
   try {
     const allReports = await Report.find();
@@ -175,6 +180,10 @@ app.get("/api/totalreports", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+
+
 
 // Fetch all registered employees
 app.get("/api/registeredemployees", async (req, res) => {
@@ -268,11 +277,34 @@ app.get("/api/totalpendingreports", async (req, res) => {
   try {
     const pendingReports = await Report.find({ resolved: false });
     res.json(pendingReports);
+    // res.json({ totalPendingReports: pendingReports.length, reports: pendingReports });
   } catch (error) {
     console.error("Error fetching pending reports:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+// to mark unresolved to resolved reports
+app.put("/api/unresolveReport/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedReport = await Report.findByIdAndUpdate(
+      id,
+      { resolved: false },
+      { new: true }
+    );
+
+    if (!updatedReport) {
+      return res.status(404).json({ error: "Report not found" });
+    }
+
+    res.json(updatedReport);
+  } catch (error) {
+    console.error("Error marking report as unresolved:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 // Add these routes to your existing Express app
 app.get("/api/posts", async (req, res) => {
@@ -347,5 +379,176 @@ app.get("/api/student-support", async (req, res) => {
   } catch (error) {
     console.error("Error fetching student details:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// user part
+
+///LOGIN
+
+app.post("/api/signup", async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
+    console.log(req.body);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({ email, password: hashedPassword, name });
+    await user.save();
+    res.status(201).send({ message: "User created successfully" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+// Login Route
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ email });
+    console.log(user);
+    console.log(user._id);
+    if (!user) {
+      throw new Error("Invalid login credentials");
+    }
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      throw new Error("Invalid login credentials");
+    }
+    const token = await jwt.sign({ userId: user._id }, "secretKey", {
+      expiresIn: "1h",
+    });
+    console.log("Token" + token);
+    res.send({ message: "Login successful", token }); // Send token in response
+  } catch (error) {
+    res.status(401).send({ error: error.message });
+  }
+});
+
+//GOALS
+app.post("/user/goals", authMiddleware, async (req, res) => {
+  try {
+    const { category, value } = req.body;
+    console.log(req.body);
+    const userId = req.userId;
+    console.log(userId);
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const goal = new Goal({ userId, category, value });
+    await goal.save();
+    res.status(201).json({ message: "Goal created successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+app.get("/api/getUserName", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
+    console.log(userId);
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ name: user.name });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post("/api/quiz",authMiddleware,  async (req, res) => {
+  try {
+    const userId = req.userId;
+    console.log(userId);
+
+    // Extract quiz responses from request body
+    const { Meditation, Exercise, Sleep, Sober } = req.body;
+    console.log(req.body);
+    // Create a new goal document for each category with userId
+    await Goal.create({ userId, category: "Meditation", value: Meditation });
+    await Goal.create({ userId, category: "Exercise", value: Exercise });
+    await Goal.create({ userId, category: "Sleep", value: Sleep });
+    await Goal.create({
+      userId,
+      category: "Sober",
+      value: Sober === "Yes" ? 1 : 0,
+    });
+
+    // Send success response
+    res.status(201).json({ message: "Quiz submitted successfully" });
+  } catch (error) {
+    // Handle errors
+    console.error("Error submitting quiz:" );
+    console.log(error);
+    res.status(500).json({ message: "Internal server error", error: error });
+  }
+});
+
+
+app.get("/api/goals-summary", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
+    console.log(userId);
+    const userGoals = await Goal.find({ userId: userId });
+    console.log("🚀 ~ app.get ~ userGoals:", userGoals)
+
+    const goalsSummary = userGoals.reduce((acc, goal) => {
+      acc[goal.category] = (acc[goal.category] || 0) + goal.value;
+      return acc;
+    }, {});
+    console.log(goalsSummary);
+    res.json(goalsSummary);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+app.get("/api/user-reports", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const userGoals = await Goal.find({ userId:userId });
+    res.json(userGoals);
+  } catch (error) {
+    console.error("Error fetching user report data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// anxiety test for users
+
+// POST endpoint to submit quiz results
+app.post('/api/results', async (req, res) => {
+  try {
+      const { userId, responses, totalScore } = req.body;
+      const quizResult = new QuizResult({
+          userId,
+          responses,
+          totalScore
+      });
+      await quizResult.save();
+      res.status(201).send('Quiz result submitted successfully.');
+  } catch (error) {
+      console.error('Error submitting quiz result:', error);
+      res.status(500).send('Internal server error.');
+  }
+});
+
+// GET endpoint to retrieve quiz results
+app.get('/api/results', async (req, res) => {
+  try {
+      const quizResults = await QuizResult.find().sort('-timestamp');
+      res.json(quizResults);
+  } catch (error) {
+      console.error('Error retrieving quiz results:', error);
+      res.status(500).send('Internal server error.');
   }
 });
