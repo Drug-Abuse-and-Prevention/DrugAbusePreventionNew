@@ -1,13 +1,29 @@
 const mongoose = require('mongoose');
 
-const responseSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-      },
-    responses: [{ question: String, answer: Number }],
-    date: { type: Date, default: Date.now }
+const anxietyTestResultSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  username:{
+    type: String,
+    required: true
+  },
+  email:{
+     type: String,
+     required: true
+  },
+  score: {
+    type: Number,
+    required: true
+  },
+  level: {
+    type: String,
+    required: true
+  }
 });
 
-module.exports = mongoose.model('Response', responseSchema);
+const AnxietyTestResult = mongoose.model('AnxietyTestResult', anxietyTestResultSchema);
+
+module.exports = AnxietyTestResult;

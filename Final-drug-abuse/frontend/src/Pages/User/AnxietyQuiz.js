@@ -1,6 +1,9 @@
+import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
-import { useNavigate  } from "react-router";
+import { useAsyncError, useNavigate  } from "react-router-dom";
+import AnxietyResultPage from "./AnxietyResultPage"; // Import the result page component
+
 function AnxietyQuiz() {
 
     const questions = [
@@ -30,21 +33,54 @@ function AnxietyQuiz() {
 const [currentQuestion, setCurrentQuestion] = useState(0);
 const [responses, setResponses] = useState(new Array(21).fill(null));
 const [totalScore, setTotalScore] = useState(0);
-const [userId, setUserId] = useState(null);
 const [anxietyLevel, setAnxietyLevel] = useState("low");
+const [submit, setSubmit] = useState(false);
+const [token, setToken] = useState("");
+const [userName, setUserName] = useState("");
 const navigate = useNavigate();
 
-
-const fetchUserId = async () => {
-   try {
-       const response  = await axios.get('/api/getUserName') ;
-       setUserId(response.data.userId);
-
-    } catch (error) {
-        console.log("Error fetching user id", error)
+useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+        setToken(token);
+        fetchUserName(token); // Call fetchUserName when token changes
     }
-};
+  }, []);
+  useEffect(() => {
+    if (token) {
+        fetchUserName(token); // Call fetchUserName when token changes
+    }
+  }, [token]);
 
+  const fetchUserName = async (token) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/api/getUserName",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // console.log(response.data);
+        setUserName(response.data.name);
+        // setUserId(response.data.userId);
+        // console.log(userId)
+        return response.data;
+        // setEmail(response.data.email);
+
+      } else {
+        console.error("Failed to fetch user name");
+        return null;
+    }
+    } catch (error) {
+      console.error("Error fetching user name:", error);
+      return null;
+    }
+  };
+// console.log(userName);
 const handleResponseChange = (value) => {
     const newResponses = [...responses];
     newResponses[currentQuestion] = value;
@@ -69,7 +105,12 @@ const handlePrevious = () =>{
     }
 };
 
-const handleSubmit = () =>{
+const handleSubmit = async () =>{
+    const token = Cookies.get("token");
+    if (!token) {
+        console.error("Token not found");
+        return;
+    }
     const score = responses.reduce((acc, val) => acc + val, 0);
     setTotalScore(score);
     let level;
@@ -83,18 +124,45 @@ const handleSubmit = () =>{
     }
     setAnxietyLevel(level);
 
-    const resultData = {
-        userId: userId, // Replace with actual user ID
-        responses: responses,
-        totalScore: score,
-        anxietyLevel: anxietyLevel
-    };
-    // navigate("/aftersubmitanxiety",{ state: { score: totalScore, anxietyLevel: anxietyLevel } })
+    try {
+        const Data = await fetchUserName(token);
+        const username = Data.name;
+        const userId = Data.userId;
+        const email = Data.email;
+        console.log(typeof(email));
+        if (!Data) {
+            console.error("User details not found");
+            return;
+        }
+        const postData = {
+            userId: userId, // Use the extracted userId
+            username:username,
+            email: email,
+            score: score,
+            level: level
+        };
+
+        const response = await axios.post(
+            `http://localhost:3001/api/anxietyTestResults`, // Update the endpoint accordingly
+            postData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response.status);
+        if (response.status === 201) {
+            console.log('Anxiety test result stored successfully');
+        } else {
+            console.error('Failed to store anxiety test result');
+         }
+    } catch (error) {
+        console.error('Error storing anxiety test result:', error);
+    }
 };
 
-useEffect ( () => {
-    fetchUserId ();
-},[]);
+
 
 return (
     <div className="min-h-screen bg-gray-200 flex items-center justify-center">
@@ -147,15 +215,29 @@ return (
                     <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg" onClick={handleNext}>Next</button>
                 )}
                 {currentQuestion === questions.length - 1 && (
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg" onClick={handleSubmit}>Submit</button>
-                )}
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg" 
+                    onClick={() => {
+                        handleSubmit();
+                        setSubmit(true);
+                    }}>Submit</button>
+                    )}
             </div>
             {totalScore > 0 && (
-                <p className="mt-6 text-center text-gray-800">Total Score: {totalScore}</p>
+                <>
+                <p className="mt-6 text-center text-gray-800">Total Score: {totalScore}
+                </p>
+                <p className="mt-6 text-center text-gray-800">result : {anxietyLevel}
+                </p>
                 
-            )}
-        </div>
+                </>
+                ) 
+                
+            }
+        </div> 
+        
     </div>
+    
+   
 );
 }
 

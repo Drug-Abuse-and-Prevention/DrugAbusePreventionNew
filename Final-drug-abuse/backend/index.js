@@ -15,7 +15,7 @@ const Goal = require("./Models/GoalModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("./authMiddleware");
-
+const AnxietyTestResult  = require("./Models/AnxietyTestModel");
 dotenv.config();
 
 const app = express();
@@ -457,7 +457,7 @@ app.get("/api/getUserName", authMiddleware, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ name: user.name });
+    res.json({ name: user.name,userId: user._id, email:user.email });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -524,31 +524,20 @@ app.get("/api/user-reports", authMiddleware, async (req, res) => {
 
 
 // anxiety test for users
-
-// POST endpoint to submit quiz results
-app.post('/api/results', async (req, res) => {
+app.post('/api/anxietyTestResults', async (req, res) => {
   try {
-      const { userId, responses, totalScore } = req.body;
-      const quizResult = new QuizResult({
-          userId,
-          responses,
-          totalScore
-      });
-      await quizResult.save();
-      res.status(201).send('Quiz result submitted successfully.');
-  } catch (error) {
-      console.error('Error submitting quiz result:', error);
-      res.status(500).send('Internal server error.');
-  }
-});
+    const { userId, username, email, score, level } = req.body;
+    const result = await AnxietyTestResult.create({
+      userId,
+      username,
+      email,
+      score,
+      level
+    });
 
-// GET endpoint to retrieve quiz results
-app.get('/api/results', async (req, res) => {
-  try {
-      const quizResults = await QuizResult.find().sort('-timestamp');
-      res.json(quizResults);
+    res.status(201).json({ message: 'Anxiety test result stored successfully', result });
   } catch (error) {
-      console.error('Error retrieving quiz results:', error);
-      res.status(500).send('Internal server error.');
+    console.error('Error storing anxiety test result:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
