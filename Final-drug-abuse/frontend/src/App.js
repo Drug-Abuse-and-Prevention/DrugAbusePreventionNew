@@ -29,6 +29,7 @@ import UserReports from "./Pages/User/UserReports";
 import AnxietytestDashBoard from "./Pages/User/AnxietytestDashBoard";
 import AnxietyQuiz from "./Pages/User/AnxietyQuiz";
 import AnxietyResultPage from "./Pages/User/AnxietyResultPage";
+import AnxietyReport from "./Pages/User/AnxietyReport";
 function App() {
   
 
@@ -74,6 +75,7 @@ function App() {
         <Route path="/anxietytestdashboard" element={<AnxietytestDashBoard/>}/>
         <Route path="/anxietyquiz" element={<AnxietyQuiz/>}/>
         <Route path="/anxietyresultpage" element = {< AnxietyResultPage/>} />
+        <Route path="anxietyReport" element = {< AnxietyReport/>} />
         </Routes>
       { !isAdminLoggedIn && !isAdminPage && <Footer />}
     </Router>

@@ -541,3 +541,18 @@ app.post('/api/anxietyTestResults', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+app.get("/api/allResults", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
+    let results;
+    if (userId) {
+      results = await AnxietyTestResult.find({ userId });
+    } else {
+      res.json({ message: "User ID not found, Please Login again" });
+    }
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

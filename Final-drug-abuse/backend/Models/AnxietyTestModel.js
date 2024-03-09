@@ -21,6 +21,10 @@ const anxietyTestResultSchema = new mongoose.Schema({
   level: {
     type: String,
     required: true
+  },
+  Date: {
+    type: Date,
+    default: Date.now
   }
 });
 
