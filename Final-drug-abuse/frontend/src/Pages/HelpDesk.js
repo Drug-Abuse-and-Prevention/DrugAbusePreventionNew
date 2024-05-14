@@ -106,7 +106,7 @@ const closeShareModal = () => {
 
 
 return (
-    <div className="linkedin-container mx-auto mt-8">
+    <div className="linkedin-container mx-auto mt-8 p-4">
     <div className="linkedin-header bg-blue-500 text-white p-4 rounded">
       <h1 className="text-4xl font-bold">
         Breaking Chains: Share Your Struggle, Find Support.
@@ -130,16 +130,16 @@ return (
 
        <div className="linkedin-posts bg-white border border-gray-300 rounded p-4">
         <h2 className="text-2xl font-bold mb-2">Recent Posts</h2>
-        <div className="post-gallery overflow-hidden">
+        <div className="post-gallery overflow-hidden ">
           {posts.map((post) => (
             <div
               key={post._id}
-              className={`post-box ${expandedComments.includes(post._id) ? 'expanded' : ''} linkedin-post border border-gray-300 rounded p-4 mb-4`}
+              className={`post-box bg-slate-100 ${expandedComments.includes(post._id) ? 'expanded' : ''} linkedin-post border border-gray-300 rounded p-4 mb-4 text-gray-900`}
             >
               <p className="mb-2">
                 <span className="font-bold text-gray-900">{post.author}:</span>{" "}
                 <br /> {expandedComments.includes(post._id) ? (
-                  <h1 className="text-red-500">{post.text}</h1>
+                  <h1 className="text-gray-700">{post.text}</h1>
                 ) : post.text.length > 150 ? (
                   <>
                     {post.text.slice(0, 150)}

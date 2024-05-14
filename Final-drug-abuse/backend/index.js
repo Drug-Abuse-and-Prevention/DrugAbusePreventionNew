@@ -15,7 +15,7 @@ const Goal = require("./Models/GoalModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("./authMiddleware");
-const AnxietyTestResult  = require("./Models/AnxietyTestModel");
+const AnxietyTestResult = require("./Models/AnxietyTestModel");
 dotenv.config();
 
 const app = express();
@@ -90,7 +90,7 @@ app.post("/report", async (req, res) => {
       🔴 *Urgent Action Required! Respond promptly to address the situation.* 🔴
     `;
 
-    const employees = await EmployeeData.find({verified: true}, "mobile");
+    const employees = await EmployeeData.find({ verified: true }, "mobile");
     const phoneNumbers = employees.map((employee) => employee.mobile);
 
     for (const phoneNumber of phoneNumbers) {
@@ -180,10 +180,6 @@ app.get("/api/totalreports", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-
-
 
 // Fetch all registered employees
 app.get("/api/registeredemployees", async (req, res) => {
@@ -305,7 +301,6 @@ app.put("/api/unresolveReport/:id", async (req, res) => {
   }
 });
 
-
 // Add these routes to your existing Express app
 app.get("/api/posts", async (req, res) => {
   try {
@@ -358,7 +353,6 @@ app.post("/api/posts/:id/comment", async (req, res) => {
   }
 });
 
-
 app.post("/api/college-support", async (req, res) => {
   try {
     const formData = req.body;
@@ -370,7 +364,6 @@ app.post("/api/college-support", async (req, res) => {
   }
 });
 
-
 // Endpoint to get student support details
 app.get("/api/student-support", async (req, res) => {
   try {
@@ -381,7 +374,6 @@ app.get("/api/student-support", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // user part
 
@@ -446,8 +438,6 @@ app.post("/user/goals", authMiddleware, async (req, res) => {
   }
 });
 
-
-
 app.get("/api/getUserName", authMiddleware, async (req, res) => {
   try {
     const userId = req.userId;
@@ -457,13 +447,13 @@ app.get("/api/getUserName", authMiddleware, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ name: user.name,userId: user._id, email:user.email });
+    res.json({ name: user.name, userId: user._id, email: user.email });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-app.post("/api/quiz",authMiddleware,  async (req, res) => {
+app.post("/api/quiz", authMiddleware, async (req, res) => {
   try {
     const userId = req.userId;
     console.log(userId);
@@ -485,19 +475,18 @@ app.post("/api/quiz",authMiddleware,  async (req, res) => {
     res.status(201).json({ message: "Quiz submitted successfully" });
   } catch (error) {
     // Handle errors
-    console.error("Error submitting quiz:" );
+    console.error("Error submitting quiz:");
     console.log(error);
     res.status(500).json({ message: "Internal server error", error: error });
   }
 });
-
 
 app.get("/api/goals-summary", authMiddleware, async (req, res) => {
   try {
     const userId = req.userId;
     console.log(userId);
     const userGoals = await Goal.find({ userId: userId });
-    console.log("🚀 ~ app.get ~ userGoals:", userGoals)
+    console.log("🚀 ~ app.get ~ userGoals:", userGoals);
 
     const goalsSummary = userGoals.reduce((acc, goal) => {
       acc[goal.category] = (acc[goal.category] || 0) + goal.value;
@@ -510,11 +499,10 @@ app.get("/api/goals-summary", authMiddleware, async (req, res) => {
   }
 });
 
-
 app.get("/api/user-reports", authMiddleware, async (req, res) => {
   try {
     const userId = req.userId;
-    const userGoals = await Goal.find({ userId:userId });
+    const userGoals = await Goal.find({ userId: userId });
     res.json(userGoals);
   } catch (error) {
     console.error("Error fetching user report data:", error);
@@ -522,23 +510,26 @@ app.get("/api/user-reports", authMiddleware, async (req, res) => {
   }
 });
 
-
 // anxiety test for users
-app.post('/api/anxietyTestResults', async (req, res) => {
+app.post("/api/anxietyTestResults", authMiddleware, async (req, res) => {
   try {
-    const { userId, username, email, score, level } = req.body;
+    const userId = req.userId;
+    console.log(userId);
+    const { username, email, score, level } = req.body;
     const result = await AnxietyTestResult.create({
       userId,
       username,
       email,
       score,
-      level
+      level,
     });
 
-    res.status(201).json({ message: 'Anxiety test result stored successfully', result });
+    res
+      .status(201)
+      .json({ message: "Anxiety test result stored successfully", result });
   } catch (error) {
-    console.error('Error storing anxiety test result:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error storing anxiety test result:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -554,5 +545,45 @@ app.get("/api/allResults", authMiddleware, async (req, res) => {
     res.json(results);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.post('/api/book-session', async (req, res) => {
+  try {
+    const apiKey = process.env.WHEREBY_API_KEY;
+    const endDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+    const response = await fetch('https://api.whereby.dev/v1/meetings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        endDate,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create meeting');
+    }
+
+    const data = await response.json();
+    const { meetingId, roomUrl } = data;
+
+    // Send email
+    const msg = {
+      to: '20bcs099@nith.ac.in',
+      from: 'rizul.thakur1@gmail.com', 
+      subject: 'New Meeting Booked',
+      text: `Meeting ID: ${meetingId}\nRoom URL: ${roomUrl}`,
+    };
+    await sgMail.send(msg);
+
+    res.status(200).json({ meetingId, roomUrl });
+  } catch (error) {
+    console.error('Error booking session:', error);
+    res.status(500).json({ error: 'Error booking session' });
   }
 });

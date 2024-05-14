@@ -1,88 +1,202 @@
 import React from "react";
-import "../Styles/StyleMain.css";
 import { Link } from "react-router-dom";
 
 const MainSection = () => {
   return (
-    <main className="flex-col items-center justify-center min-h-screen p-8 bg-gray-400 bg">
-      <div className="mb-8 text-center">
-        <h3 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-          Drug Abuse Reporting and Prevention
-        </h3>
-        {/* <div className="font-bold text-xl mx-4 mb-8 text-center text-white">
-          <p>
-            Welcome to our Drug Abuse Prevention website. We are dedicated to
-            spreading awareness about the dangers of drug abuse and providing
-            resources to help prevent it.
-          </p>
-        </div> */}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-6 rounded-lg shadow-lg bg-gray-100">
-          <h2 className="text-gray-500 text-xl font-semibold mb-4">
-            Recognizing Drug Abuse
-          </h2>
-          <p className="text-gray-500">
-            Learn about the signs and symptoms of drug abuse. Understanding the
-            early indicators can help in prevention and intervention.
-          </p>
+    <main className="flex flex-col min-h-screen">
+      <section className="bg py-12 md:py-24 lg:py-32 bg-white text-gray-800">
+        <div className="container px-4 md:px-6 flex flex-col items-center justify-center space-y-6">
+          <div className="bg-white/50 rounded-lg p-8 shadow-md">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter text-center">
+                Drug Abuse Prevention and Reporting 
+              </h1>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter text-center">
+                at NIT Hamirpur
+              </h1>
+              <p className="max-w-[700px] text-lg text-center">
+                Empowering our community to overcome substance abuse through
+                education, support, and advocacy.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/userSignup"
+            className="inline-flex items-center justify-center btn btn-primary btn-lg btn-block mt-8 text-white bg-blue-600 hover:bg-blue-700 rounded-xl px-4 py-2 text-xl"
+          >
+            Get started
+            <svg
+              className="ml-2 -mr-1 w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+            <span className="ml-2 ">Signup</span>
+          </Link>
         </div>
-        <div className="p-6 rounded-lg shadow-lg bg-gray-100">
-          <h2 className="text-gray-500 text-xl font-semibold mb-4">
-            Prevention Strategies
-          </h2>
-          <p className="text-gray-500">
-            Discover effective prevention strategies, educational programs, and
-            community initiatives that can help prevent drug abuse among
-            individuals and communities.
-          </p>
+      </section>
+
+      <section className="py-12 md:py-24 lg:py-32">
+        <div className="container px-4 md:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <UserIcon className="h-12 w-12 text-blue-500" />
+            <h3 className="text-xl font-bold">Anonymous Reporting</h3>
+            <p className="text-gray-500">
+              Safely report drug-related concerns without fear of retaliation.
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <PillIcon className="h-12 w-12 text-blue-500" />
+            <h3 className="text-xl font-bold">Prevention Strategies</h3>
+            <p className="text-gray-500">
+              Learn effective ways to identify and address substance abuse.
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <ShareIcon className="h-12 w-12 text-blue-500" />
+            <h3 className="text-xl font-bold">
+              Share Your Stories/Ask for Help
+            </h3>
+            <p className="text-gray-500">
+              Connect with our community and access the support you need.
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <GoalIcon className="h-12 w-12 text-blue-500" />
+            <h3 className="text-xl font-bold">Recognizing Drug Abuse</h3>
+            <p className="text-gray-500">
+              Understand the signs and symptoms of substance abuse.
+            </p>
+          </div>
         </div>
-        <div className="p-6 rounded-lg shadow-lg bg-gray-100">
-          <h2 className="text-gray-500 text-xl font-semibold mb-4">
-            Report Us (Anonymously)!
-          </h2>
-          <p className="text-gray-500">
-            Reporting drug abuse is a powerful stand against the destruction of
-            lives and dreams. Be the voice that speaks out, the hand that
-            reaches out, and the heart that cares.
-          </p>
+      </section>
+      <section className="py-12 md:py-24 lg:py-32 bg-gray-900 text-white">
+        <div className="container px-4 md:px-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="bg-blue-500 rounded-lg overflow-hidden shadow-md">
+            <Link
+              to="/reportform"
+              className="inline-flex items-center justify-center h-16 w-full px-8 bg-blue-500 hover:bg-blue-600 text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-600"
+            >
+              Reporting
+            </Link>
+          </div>
+          <div className="bg-blue-500 rounded-lg overflow-hidden shadow-md">
+            <Link
+              to="/helpdesk"
+              className="inline-flex items-center justify-center h-16 w-full px-8 bg-blue-500 hover:bg-blue-600 text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-600"
+            >
+              Share Your Story
+            </Link>
+          </div>
+          <div className="bg-blue-500 rounded-lg overflow-hidden shadow-md">
+            <Link
+              to="/help"
+              className="inline-flex items-center justify-center h-16 w-full px-8 bg-blue-500 hover:bg-blue-600 text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-600"
+            >
+              Need Counselling?
+            </Link>
+          </div>
+          <div className="bg-blue-500 rounded-lg overflow-hidden shadow-md">
+            <Link
+              to={"/tweetClassification"}
+             
+              className="inline-flex items-center justify-center h-16 w-full px-8 bg-blue-500 hover:bg-blue-600 text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-600"
+            >
+              Tweet Classification
+            </Link>
+          </div>
         </div>
-        <div className="p-6 rounded-lg shadow-lg bg-gray-100">
-          <h2 className="text-gray-500 text-xl font-semibold mb-4">
-            Share your stories/Ask for help Anonymously
-          </h2>
-          <p className="text-gray-500">
-            Breaking Chains, a safe space where you can share your stories and
-            seek support anonymously. If you're struggling with drug abuse or
-            addiction, you can ask for help without revealing your identity.
-            Share your journey, inspire others.
-          </p>
-        </div>
-      </div>
-      <div className="flex flex-col items-center justify-center mt-8">
-        <Link to="/reportform">
-          <button className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 mb-4 text-xl">
-            Report Anonymously
-          </button>
-        </Link>
-        <Link to="/helpdesk">
-          <button className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 mb-4  text-xl">
-            Share your story/Ask for help
-          </button>
-        </Link>
-        <Link to="/help">
-          <button className="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 text-xl">
-            Need Counselling? Click here
-          </button>
-        </Link>
-        <Link to="https://tweet-classification-hckpgdd33x8bsqygaihacz.streamlit.app/#tweet-classification-for-substance-use-detection">
-        <button className="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 text-xl mt-5">
-          tweet classification
-        </button>
-      </Link>
-      </div>
+      </section>
     </main>
   );
 };
 
 export default MainSection;
+
+function GoalIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 13V2l8 4-8 4" />
+      <path d="M20.561 10.222a9 9 0 1 1-12.55-5.29" />
+      <path d="M8.002 9.997a5 5 0 1 0 8.9 2.02" />
+    </svg>
+  );
+}
+
+function PillIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+      <path d="m8.5 8.5 7 7" />
+    </svg>
+  );
+}
+
+function ShareIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      <polyline points="16 6 12 2 8 6" />
+      <line x1="12" x2="12" y1="2" y2="15" />
+    </svg>
+  );
+}
+
+function UserIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}

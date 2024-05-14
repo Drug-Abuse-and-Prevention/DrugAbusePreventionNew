@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Educational = () => {
   return (
@@ -78,14 +79,14 @@ const Educational = () => {
             <p className="text-gray-600">
               What Do Substance Abuse and Addiction Mean?
             </p>
-            <a
-              href="https://kidshealth.org/en/teens/addictions.html"
+            <Link
+            to={"https://kidshealth.org/en/teens/addictions.html"}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:underline mt-2 block"
             >
               Read More
-            </a>
+            </Link>
           </div>
           
           {/* Add more article cards as needed */}

@@ -30,6 +30,7 @@ const AnxietyReport = () => {
           }
         );
         setResults(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching results:", error);
       }
@@ -52,30 +53,21 @@ const AnxietyReport = () => {
 
   return (
     <div className="flex flex-col items-center justify-start  bg-gradient-to-r from-teal-50 to-teal-200 p-8 h-screen">
-      <h1 className="text-3xl font-bold mb-4 font-serif text-gray-500">
-        Anxiety Test Results
+      <h1 className="text-4xl font-extrabold text-gray-500 mb-10">
+        Anxiety Test Report
       </h1>
-      <div className="bg-white shadow-md rounded-lg p-4 ">
+      <div className="bg-white shadow-md rounded-lg p-4 bg-gradient-to-r from-indigo-400 to-indigo-300">
         <ResponsiveContainer width={800} height={400}>
           <LineChart data={results}>
-            <XAxis dataKey="Date" stroke="#374151" tickFormatter={formatDate} />
-            <YAxis stroke="#374151" />
-            <CartesianGrid stroke="#ccc" />
-            <Tooltip cursor={{ stroke: "#374151", strokeWidth: 2 }} />
+            <XAxis strokeWidth={3} stroke="white" dataKey="Date"  tickFormatter={formatDate} />
+            <YAxis strokeWidth={3}stroke="white" />
+            <Tooltip stroke="white " strokeWidth={3} cursor={{ stroke: "#374151", strokeWidth: 2 }} />
             <Legend />
             <Line
               type="monotone"
               dataKey="score"
-              stroke="#3B82F6"
-              strokeWidth={3}
-              dot={{ stroke: "#3B82F6", strokeWidth: 2, fill: "white" }}
-            />
-            <Line
-              type="monotone"
-              dataKey="level"
-              stroke="#10B981"
-              strokeWidth={3}
-              dot={{ stroke: "#10B981", strokeWidth: 2, fill: "white" }}
+              stroke="white"
+              strokeWidth={5}
             />
           </LineChart>
         </ResponsiveContainer>
