@@ -32,12 +32,7 @@ export default function UserQuiz() {
       };
 
       // Send quiz responses with token in headers
-      await axios
-        .post("http://localhost:3001/api/quiz", quizResponses, config)
-        .then((response) => {
-          console.log("Quiz submitted successfully:", response.data);
-          
-        });
+      await axios.post("http://localhost:3001/api/quiz", quizResponses, config);
 
       alert("Quiz submitted successfully!");
       navigate("/userdashboard");
@@ -45,100 +40,73 @@ export default function UserQuiz() {
       console.error("Error submitting quiz:", error);
     }
   };
+
   return (
-    <div className="flex flex-col items-center justify-start h-screen bg-gradient-to-r from-teal-50 to-teal-200">
-      <h1 className="text-3xl font-bold mt-10 text-gray-700 mb-12 tracking-tight ">
-        Daily Wellness Quiz
-      </h1>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col space-y-8 items-center"
-      >
-        <div className="w-full bg-gradient-to-r from-teal-500 to-teal-300 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
-          <div className="p-4 flex flex-col justify-center items-center">
-            <label
-              htmlFor="Meditation"
-              className="block font-semibold mb-2 text-white text-3xl"
-            >
-              How many minutes did you meditate today?
-            </label>
-            <input
-              type="number"
-              id="Meditation"
-              className="border rounded-2xl  w-1/5 px-3 py-2  bg-teal-100 focus:outline-none focus:border-teal-500"
-              value={quizResponses.Meditation}
-              onChange={(e) => handleInputChange("Meditation", e.target.value)}
-              placeholder="10 mins"
-            />
-          </div>
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-800 py-12 ">
+      <h1 className="text-3xl font-bold mb-8 text-gray-200">Daily Wellness Quiz</h1>
+      <form onSubmit={handleSubmit} className="w-full max-w-lg text-black">
+        <QuizInput
+          
+          label="How many minutes did you meditate today?"
+          id="Meditation"
+          value={quizResponses.Meditation}
+          onChange={(e) => handleInputChange("Meditation", e.target.value)}
+          placeholder="e.g., 10 mins"
+        />
+        <QuizInput
+          label="How many minutes did you exercise today?"
+          id="Exercise"
+          value={quizResponses.Exercise}
+          onChange={(e) => handleInputChange("Exercise", e.target.value)}
+          placeholder="e.g., 20 mins"
+        />
+        <QuizInput
+          label="How many hours did you sleep last night?"
+          id="Sleep"
+          value={quizResponses.Sleep}
+          onChange={(e) => handleInputChange("Sleep", e.target.value)}
+          placeholder="e.g., 8 hours"
+        />
+        <div className="flex flex-col mb-4 text-black">
+          <label htmlFor="Sober" className="font-semibold mb-2 text-gray-200">
+            Were you sober today?
+          </label>
+          <select
+            id="Sober"
+            className="border rounded-lg px-3 py-2 bg-gray-200 focus:outline-none focus:border-blue-500"
+            value={quizResponses.Sober}
+            onChange={(e) => handleInputChange("Sober", e.target.value)}
+          >
+            <option  value="">Select</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
         </div>
-
-        <div className="w-full bg-gradient-to-r from-teal-500 to-teal-300 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
-          <div className="p-4 flex flex-col justify-center items-center">
-            <label
-              htmlFor="Exercise"
-              className="block font-semibold mb-2 text-white text-3xl"
-            >
-              How many minutes did you exercise today?
-            </label>
-            <input
-              type="number"
-              id="Exercise"
-              className="border rounded-2xl  w-1/5 px-3 py-2 bg-teal-100 focus:outline-none focus:border-teal-500"
-              value={quizResponses.Exercise}
-              onChange={(e) => handleInputChange("Exercise", e.target.value)}
-              placeholder="20 mins"
-            />
-          </div>
-        </div>
-
-        <div className="w-full bg-gradient-to-r from-indigo-500 to-indigo-300 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
-          <div className="p-4 flex flex-col justify-center items-center">
-            <label
-              htmlFor="Sleep"
-              className="block font-semibold mb-2 text-white text-3xl"
-            >
-              How many hours did you sleep last night?
-            </label>
-            <input
-              type="number"
-              id="Sleep"
-              className="border rounded-2xl  w-1/5 px-3 py-2 bg-teal-100 focus:outline-none focus:border-teal-500"
-              value={quizResponses.Sleep}
-              onChange={(e) => handleInputChange("Sleep", e.target.value)}
-              placeholder="8 Hours"
-            />
-          </div>
-        </div>
-
-        <div className="w-full bg-gradient-to-r from-indigo-500 to-indigo-300 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
-          <div className="p-4 flex flex-col justify-center items-center">
-            <label
-              htmlFor="Sober"
-              className="block font-semibold mb-2 text-white text-3xl"
-            >
-              Were you sober today?
-            </label>
-            <select
-              id="Sober"
-              className="border rounded-2xl  w-1/5 px-3 py-2 bg-teal-100 focus:outline-none focus:border-teal-500"
-              value={quizResponses.Sober}
-              onChange={(e) => handleInputChange("Sober", e.target.value)}
-            >
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-        </div>
-
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-slate-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition duration-300"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition duration-300"
         >
           Submit
         </button>
       </form>
+    </div>
+  );
+}
+
+function QuizInput({ label, id, value, onChange, placeholder }) {
+  return (
+    <div className="flex flex-col mb-4">
+      <label htmlFor={id} className="font-semibold mb-2 text-gray-100">
+        {label}
+      </label>
+      <input
+        type="number"
+        id={id}
+        className="border rounded-lg px-3 py-2 bg-gray-200 focus:outline-none focus:border-blue-500"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
     </div>
   );
 }
